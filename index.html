@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diag'Mob 360° - Diagnostic mobilité complet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .font-montserrat { font-family: 'Montserrat', sans-serif; }
+        .font-nunito { font-family: 'Nunito', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #7A1A7A 0%, #E61D72 50%, #3BA4E0 100%); }
+        .progress-bar { 
+            background: linear-gradient(90deg, #3BA4E0 0%, #7AC143 100%);
+            transition: width 0.8s ease;
+        }
+        .card-hover { 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+        }
+        .card-hover:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
+        }
+        .option-selected {
+            background: linear-gradient(135deg, #7A1A7A, #E61D72);
+            color: white;
+            transform: scale(1.02);
+        }
+        .scale-option {
+            transition: all 0.2s ease;
+        }
+        .scale-option:hover {
+            transform: scale(1.05);
+        }
+        .domain-icon {
+            background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+            border: 2px solid #d1d5db;
+        }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .radar-container { position: relative; width: 400px; height: 400px; margin: 0 auto; }
+
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-nunito">
+    
+    <!-- Page de garde -->
+    <div id="welcome-page" class="min-h-screen flex flex-col">
+        <div class="gradient-bg h-3"></div>
+        
+        <div class="flex-1 flex items-center justify-center p-6">
+            <div class="text-center max-w-4xl">
+                <div class="mb-8">
+                    <h1 class="text-6xl md:text-7xl font-montserrat font-bold text-purple-800 mb-4">
+                        Diag'Mob 360°
+                    </h1>
+                    <h2 class="text-3xl md:text-4xl font-montserrat font-semibold text-pink-600 mb-6">
+                        Diagnostic mobilité complet
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8">
+                        Un outil technique et complet pour évaluer tous les aspects de ta mobilité : 
+                        transport, financement, compétences, santé, social et projets personnels.
+                    </p>
+                </div>
+
+                <!-- Domaines couverts -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl mb-8">
+                    <h3 class="text-2xl font-montserrat font-bold text-purple-800 mb-6">8 Domaines analysés</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">🗺️</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Géographie</p>
+                            <p class="text-xs text-gray-500">Environnement & localisation</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">🚗</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Transport</p>
+                            <p class="text-xs text-gray-500">Moyens & accessibilité</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">🧠</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Compétences</p>
+                            <p class="text-xs text-gray-500">Savoir-faire mobilité</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">💚</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Santé</p>
+                            <p class="text-xs text-gray-500">Physique & psychologique</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">💰</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Financement</p>
+                            <p class="text-xs text-gray-500">Budget & aides</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">👥</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Social</p>
+                            <p class="text-xs text-gray-500">Réseau & soutien</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">⚠️</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Contraintes</p>
+                            <p class="text-xs text-gray-500">Barrières externes</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-20 h-20 domain-icon rounded-full flex items-center justify-center mx-auto mb-3">
+                                <span class="text-3xl">🎯</span>
+                            </div>
+                            <p class="font-semibold text-gray-800">Projets</p>
+                            <p class="text-xs text-gray-500">Aspirations & objectifs</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Avantages techniques -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200">
+                        <div class="text-4xl mb-4">🔬</div>
+                        <h4 class="font-montserrat font-bold text-blue-800 mb-2">Analyse technique</h4>
+                        <p class="text-sm text-blue-600">Scoring algorithmique et logique conditionnelle avancée</p>
+                    </div>
+                    <div class="bg-green-50 rounded-2xl p-6 border-2 border-green-200">
+                        <div class="text-4xl mb-4">📊</div>
+                        <h4 class="font-montserrat font-bold text-green-800 mb-2">Profil 360°</h4>
+                        <p class="text-sm text-green-600">Radar complet avec recommandations personnalisées</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200">
+                        <div class="text-4xl mb-4">📱</div>
+                        <h4 class="font-montserrat font-bold text-purple-800 mb-2">Interface adaptative</h4>
+                        <p class="text-sm text-purple-600">Compatible tous supports avec navigation fluide</p>
+                    </div>
+                </div>
+
+                <button onclick="startDiagnostic()" class="gradient-bg text-white px-12 py-6 rounded-full text-2xl font-montserrat font-bold hover:shadow-2xl transition-all duration-300 transform hover:scale-105 pulse">
+                    🚀 Lancer le diagnostic 360°
+                </button>
+                <p class="text-sm text-gray-500 mt-4">⏱️ Durée : 15-20 minutes • 📊 50+ questions • 🎯 Analyse complète</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pages de questions -->
+    <div id="question-pages" class="hidden min-h-screen">
+        <!-- Header avec progression -->
+        <div class="bg-white shadow-lg sticky top-0 z-20">
+            <div class="gradient-bg h-3"></div>
+            <div class="max-w-6xl mx-auto p-4">
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <h2 class="text-xl font-montserrat font-bold text-purple-800">Diag'Mob 360°</h2>
+                        <div id="domain-title" class="text-base font-semibold text-pink-600"></div>
+                    </div>
+                    <div class="text-right">
+                        <div id="progress-text" class="text-base font-bold text-purple-800">Question 1/50</div>
+                        <div id="step-indicator" class="text-sm text-gray-600">Étape 1/8</div>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                    <div id="progress-bar" class="progress-bar h-3 rounded-full shadow-sm" style="width: 2%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu des questions -->
+        <div class="max-w-5xl mx-auto p-6">
+            <div id="question-container" class="bg-white rounded-3xl shadow-xl p-10 mb-8 border border-gray-100">
+                <!-- Questions dynamiques -->
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center">
+                <button id="prev-btn" onclick="previousQuestion()" class="bg-gray-200 text-gray-700 px-10 py-5 rounded-full font-bold hover:bg-gray-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg" disabled>
+                    ⬅️ Précédent
+                </button>
+                <div class="text-center">
+                    <div id="question-counter" class="text-lg font-semibold text-gray-600">1 sur 50</div>
+                    <div class="text-sm text-gray-500 mt-1">Questions restantes : <span id="remaining-questions">49</span></div>
+                </div>
+                <button id="next-btn" onclick="nextQuestion()" class="gradient-bg text-white px-10 py-5 rounded-full font-bold hover:shadow-xl transition-all shadow-lg">
+                    Suivant ➡️
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page profil -->
+    <div id="profile-page" class="hidden min-h-screen">
+        <div class="gradient-bg h-3"></div>
+        <div class="max-w-7xl mx-auto p-6">
+            <!-- En-tête profil -->
+            <div class="text-center mb-10">
+                <h2 class="text-5xl font-montserrat font-bold text-purple-800 mb-6">Ton Profil Mobilité 360°</h2>
+                <div id="profile-badge" class="inline-block gradient-bg text-white px-10 py-6 rounded-full text-3xl font-montserrat font-bold mb-6 shadow-2xl">
+                    <!-- Profil dynamique -->
+                </div>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Analyse complète de tes 8 domaines de mobilité</p>
+            </div>
+
+            <!-- Contenu profil -->
+            <div class="grid lg:grid-cols-2 gap-10 mb-10">
+                <!-- Graphique radar -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                    <h3 class="text-3xl font-montserrat font-bold text-purple-800 mb-8 text-center">Radar Mobilité 360°</h3>
+                    <div class="radar-container">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scores détaillés -->
+                <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100">
+                    <h3 class="text-3xl font-montserrat font-bold text-purple-800 mb-8">Scores par domaine</h3>
+                    <div id="domain-scores" class="space-y-4">
+                        <!-- Scores dynamiques -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommandations -->
+            <div class="bg-white rounded-3xl p-8 shadow-xl border border-gray-100 mb-10">
+                <h3 class="text-3xl font-montserrat font-bold text-purple-800 mb-8">Recommandations personnalisées</h3>
+                <div id="recommendations-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Recommandations dynamiques -->
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="text-center">
+                <button onclick="showReport()" class="gradient-bg text-white px-12 py-6 rounded-full text-2xl font-montserrat font-bold hover:shadow-2xl transition-all mr-4">
+                    📊 Voir le bilan complet
+                </button>
+                <button onclick="downloadAdvancedPDF()" class="bg-blue-600 text-white px-12 py-6 rounded-full text-2xl font-montserrat font-bold hover:bg-blue-700 transition-all">
+                    📄 Télécharger PDF technique
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page bilan -->
+    <div id="report-page" class="hidden min-h-screen">
+        <div class="gradient-bg h-3"></div>
+        <div class="max-w-6xl mx-auto p-6">
+            <!-- En-tête bilan -->
+            <div class="text-center mb-10">
+                <h2 class="text-5xl font-montserrat font-bold text-purple-800 mb-6">Bilan Mobilité 360°</h2>
+                <p class="text-xl text-gray-600">Rapport technique complet pour accompagnement professionnel</p>
+            </div>
+
+            <!-- Contenu bilan -->
+            <div class="bg-white rounded-3xl shadow-xl p-10 mb-10 border border-gray-100">
+                <div id="report-content">
+                    <!-- Contenu du bilan généré -->
+                </div>
+            </div>
+
+            <!-- Actions finales -->
+            <div class="text-center space-y-6">
+                <div class="space-x-6">
+                    <button onclick="downloadAdvancedPDF()" class="gradient-bg text-white px-10 py-5 rounded-full text-xl font-montserrat font-bold hover:shadow-xl transition-all">
+                        ⬇️ Télécharger bilan PDF
+                    </button>
+                    <button onclick="shareAdvancedReport()" class="bg-blue-600 text-white px-10 py-5 rounded-full text-xl font-montserrat font-bold hover:bg-blue-700 transition-all">
+                        📧 Partager avec conseiller
+                    </button>
+                    <button onclick="exportData()" class="bg-green-600 text-white px-10 py-5 rounded-full text-xl font-montserrat font-bold hover:bg-green-700 transition-all">
+                        📊 Exporter données
+                    </button>
+                </div>
+                <button onclick="restartDiagnostic()" class="bg-gray-400 text-white px-8 py-4 rounded-full font-bold hover:bg-gray-500 transition-all">
+                    🔄 Nouveau diagnostic
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration complète des domaines et questions
+        const diagnosticDomains = [
+            {
+                id: "geographie",
+                title: "Situation géographique & environnement",
+                icon: "🗺️",
+                color: "blue",
+                description: "Analyse de ton environnement et localisation",
+                questions: [
+                    {
+                        id: "lieu_residence",
+                        text: "Où habites-tu précisément ?",
+                        type: "single",
+                        options: [
+                            { value: "centre_urbain", text: "Centre-ville urbain (+ 100k hab.)", icon: "🏙️", score: 5 },
+                            { value: "banlieue", text: "Banlieue/périphérie urbaine", icon: "🏘️", score: 4 },
+                            { value: "ville_moyenne", text: "Ville moyenne (10-100k hab.)", icon: "🏢", score: 3 },
+                            { value: "bourg_rural", text: "Bourg rural (< 10k hab.)", icon: "🌾", score: 2 },
+                            { value: "hameau_isole", text: "Hameau/zone isolée", icon: "🏔️", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "distance_services",
+                        text: "À quelle distance se trouvent les services essentiels (emploi, formation, santé) ?",
+                        type: "single",
+                        options: [
+                            { value: "moins_5km", text: "Moins de 5 km", icon: "🎯", score: 5 },
+                            { value: "5_15km", text: "Entre 5 et 15 km", icon: "📍", score: 4 },
+                            { value: "15_30km", text: "Entre 15 et 30 km", icon: "🗺️", score: 3 },
+                            { value: "30_50km", text: "Entre 30 et 50 km", icon: "🛣️", score: 2 },
+                            { value: "plus_50km", text: "Plus de 50 km", icon: "🌍", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "infrastructures_proximite",
+                        text: "Quelles infrastructures de transport sont présentes près de chez toi ?",
+                        type: "multiple",
+                        options: [
+                            { value: "arret_bus", text: "Arrêt de bus", icon: "🚌", score: 2 },
+                            { value: "gare_train", text: "Gare ferroviaire", icon: "🚂", score: 3 },
+                            { value: "metro_tram", text: "Métro/Tramway", icon: "🚊", score: 3 },
+                            { value: "pistes_cyclables", text: "Pistes cyclables", icon: "🚴", score: 2 },
+                            { value: "parking_gratuit", text: "Parking gratuit", icon: "🅿️", score: 1 },
+                            { value: "aucune", text: "Aucune infrastructure", icon: "❌", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "qualite_desserte",
+                        text: "Comment évalues-tu la qualité de la desserte transport dans ta zone ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Très mauvaise", "Mauvaise", "Correcte", "Bonne", "Excellente"] }
+                    },
+                    {
+                        id: "topographie_terrain",
+                        text: "Comment est le relief de ta zone de déplacement ?",
+                        type: "single",
+                        options: [
+                            { value: "plat", text: "Terrain plat", icon: "🏞️", score: 5 },
+                            { value: "legerement_vallonne", text: "Légèrement vallonné", icon: "🌄", score: 4 },
+                            { value: "vallonne", text: "Vallonné", icon: "⛰️", score: 3 },
+                            { value: "montagneux", text: "Montagneux", icon: "🏔️", score: 2 },
+                            { value: "tres_accidente", text: "Très accidenté", icon: "🗻", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "securite_zone",
+                        text: "Te sens-tu en sécurité pour te déplacer dans ta zone ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Pas du tout", "Peu", "Moyennement", "Assez", "Totalement"] }
+                    }
+                ]
+            },
+            {
+                id: "transport",
+                title: "Transport & moyens matériels",
+                icon: "🚗",
+                color: "green",
+                description: "Évaluation de tes moyens de transport",
+                questions: [
+                    {
+                        id: "acces_transport_public",
+                        text: "Quel est ton niveau d'accès aux transports publics ?",
+                        type: "single",
+                        options: [
+                            { value: "excellent", text: "Excellent (fréquent, fiable, proche)", icon: "✅", score: 5 },
+                            { value: "bon", text: "Bon (quelques limitations)", icon: "👍", score: 4 },
+                            { value: "moyen", text: "Moyen (horaires contraignants)", icon: "⏰", score: 3 },
+                            { value: "limite", text: "Limité (peu fréquent)", icon: "⚠️", score: 2 },
+                            { value: "inexistant", text: "Inexistant ou inaccessible", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "cout_transport_public",
+                        text: "Comment perçois-tu le coût des transports publics ?",
+                        type: "single",
+                        options: [
+                            { value: "gratuit", text: "Gratuit ou très abordable", icon: "🆓", score: 5 },
+                            { value: "abordable", text: "Abordable", icon: "💚", score: 4 },
+                            { value: "correct", text: "Correct", icon: "💛", score: 3 },
+                            { value: "cher", text: "Cher", icon: "💸", score: 2 },
+                            { value: "trop_cher", text: "Trop cher pour moi", icon: "🚫", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "permis_conduire",
+                        text: "Quelle est ta situation concernant le permis de conduire ?",
+                        type: "single",
+                        options: [
+                            { value: "obtenu", text: "J'ai mon permis", icon: "🚗", score: 5 },
+                            { value: "en_cours", text: "En cours de passage", icon: "📚", score: 3 },
+                            { value: "inscrit", text: "Inscrit en auto-école", icon: "🏫", score: 2 },
+                            { value: "projet", text: "Projet de le passer", icon: "💭", score: 1 },
+                            { value: "pas_prevu", text: "Pas prévu", icon: "🚫", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "vehicule_personnel",
+                        text: "De quels véhicules personnels disposes-tu ?",
+                        type: "multiple",
+                        options: [
+                            { value: "voiture", text: "Voiture personnelle", icon: "🚗", score: 5 },
+                            { value: "scooter_moto", text: "Scooter/Moto", icon: "🛵", score: 4 },
+                            { value: "velo_electrique", text: "Vélo électrique", icon: "🚴‍♂️", score: 3 },
+                            { value: "velo_classique", text: "Vélo classique", icon: "🚲", score: 2 },
+                            { value: "trottinette", text: "Trottinette électrique", icon: "🛴", score: 1 },
+                            { value: "aucun", text: "Aucun véhicule", icon: "🚶", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "acces_vehicule_famille",
+                        text: "Peux-tu utiliser un véhicule familial ?",
+                        type: "single",
+                        options: [
+                            { value: "libre_acces", text: "Libre accès quand je veux", icon: "🔓", score: 5 },
+                            { value: "souvent", text: "Souvent disponible", icon: "✅", score: 4 },
+                            { value: "parfois", text: "Parfois disponible", icon: "⏰", score: 3 },
+                            { value: "rarement", text: "Rarement disponible", icon: "⚠️", score: 2 },
+                            { value: "jamais", text: "Jamais disponible", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "etat_vehicules",
+                        text: "Dans quel état sont tes moyens de transport ?",
+                        type: "single",
+                        options: [
+                            { value: "excellent", text: "Excellent état, fiables", icon: "⭐", score: 5 },
+                            { value: "bon", text: "Bon état général", icon: "👍", score: 4 },
+                            { value: "correct", text: "État correct", icon: "🔧", score: 3 },
+                            { value: "problematique", text: "Problèmes fréquents", icon: "⚠️", score: 2 },
+                            { value: "mauvais", text: "Mauvais état", icon: "🔴", score: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "competences",
+                title: "Connaissances & compétences mobilité",
+                icon: "🧠",
+                color: "purple",
+                description: "Évaluation de tes savoir-faire en mobilité",
+                questions: [
+                    {
+                        id: "lecture_horaires",
+                        text: "À quel point maîtrises-tu la lecture d'horaires et de plans de transport ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Pas du tout", "Difficilement", "Moyennement", "Bien", "Parfaitement"] }
+                    },
+                    {
+                        id: "planification_trajet",
+                        text: "Sais-tu planifier un trajet complexe avec plusieurs correspondances ?",
+                        type: "single",
+                        options: [
+                            { value: "expert", text: "Oui, je suis expert", icon: "🎯", score: 5 },
+                            { value: "autonome", text: "Oui, de façon autonome", icon: "✅", score: 4 },
+                            { value: "avec_aide", text: "Avec un peu d'aide", icon: "🤝", score: 3 },
+                            { value: "difficilement", text: "Difficilement", icon: "😰", score: 2 },
+                            { value: "pas_du_tout", text: "Pas du tout", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "apps_mobilite",
+                        text: "Quelles applications de mobilité utilises-tu régulièrement ?",
+                        type: "multiple",
+                        options: [
+                            { value: "google_maps", text: "Google Maps", icon: "🗺️", score: 2 },
+                            { value: "citymapper", text: "Citymapper", icon: "🚇", score: 2 },
+                            { value: "sncf_connect", text: "SNCF Connect", icon: "🚂", score: 2 },
+                            { value: "apps_locales", text: "Apps transport locales", icon: "📱", score: 2 },
+                            { value: "covoiturage", text: "Apps covoiturage", icon: "🚗", score: 1 },
+                            { value: "aucune", text: "Aucune application", icon: "🚫", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "connaissance_aides",
+                        text: "Connais-tu les aides financières à la mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "tres_bien", text: "Très bien, j'en utilise", icon: "💡", score: 5 },
+                            { value: "bien", text: "Bien, je sais où chercher", icon: "🔍", score: 4 },
+                            { value: "vaguement", text: "Vaguement", icon: "🤔", score: 3 },
+                            { value: "peu", text: "Très peu", icon: "❓", score: 2 },
+                            { value: "pas_du_tout", text: "Pas du tout", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "adaptation_imprevus",
+                        text: "Comment réagis-tu face aux imprévus de transport (retards, grèves, pannes) ?",
+                        type: "single",
+                        options: [
+                            { value: "tres_bien", text: "Je trouve toujours une solution", icon: "🎯", score: 5 },
+                            { value: "bien", text: "Je m'adapte bien", icon: "💪", score: 4 },
+                            { value: "moyen", text: "Ça dépend de la situation", icon: "🤷", score: 3 },
+                            { value: "difficilement", text: "J'ai du mal à m'adapter", icon: "😰", score: 2 },
+                            { value: "panique", text: "Je panique facilement", icon: "😱", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "conduite_autonome",
+                        text: "Si tu conduis, comment évalues-tu ton niveau ?",
+                        type: "single",
+                        conditional: { question: "permis_conduire", values: ["obtenu"] },
+                        options: [
+                            { value: "expert", text: "Conducteur expert", icon: "🏆", score: 5 },
+                            { value: "confirme", text: "Conducteur confirmé", icon: "✅", score: 4 },
+                            { value: "correct", text: "Niveau correct", icon: "👍", score: 3 },
+                            { value: "debutant", text: "Encore débutant", icon: "🔰", score: 2 },
+                            { value: "non_applicable", text: "Je ne conduis pas", icon: "🚫", score: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "sante",
+                title: "Santé, condition physique & psychologie",
+                icon: "💚",
+                color: "red",
+                description: "Impact de ta santé sur ta mobilité",
+                questions: [
+                    {
+                        id: "condition_physique",
+                        text: "Comment évalues-tu ta condition physique pour les déplacements ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Très limitée", "Limitée", "Correcte", "Bonne", "Excellente"] }
+                    },
+                    {
+                        id: "capacite_marche",
+                        text: "Quelle distance peux-tu parcourir à pied confortablement ?",
+                        type: "single",
+                        options: [
+                            { value: "plus_5km", text: "Plus de 5 km", icon: "🚶‍♂️", score: 5 },
+                            { value: "2_5km", text: "Entre 2 et 5 km", icon: "👟", score: 4 },
+                            { value: "1_2km", text: "Entre 1 et 2 km", icon: "🚶", score: 3 },
+                            { value: "500m_1km", text: "Entre 500m et 1 km", icon: "🦽", score: 2 },
+                            { value: "moins_500m", text: "Moins de 500m", icon: "♿", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "capacite_velo",
+                        text: "Peux-tu utiliser un vélo ?",
+                        type: "single",
+                        options: [
+                            { value: "longue_distance", text: "Oui, même longue distance", icon: "🚴‍♂️", score: 5 },
+                            { value: "courte_distance", text: "Oui, courte distance", icon: "🚲", score: 4 },
+                            { value: "avec_assistance", text: "Avec assistance électrique", icon: "⚡", score: 3 },
+                            { value: "difficilement", text: "Difficilement", icon: "😓", score: 2 },
+                            { value: "impossible", text: "Impossible", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "fatigue_trajets",
+                        text: "Les trajets te génèrent-ils de la fatigue ?",
+                        type: "single",
+                        options: [
+                            { value: "jamais", text: "Jamais", icon: "😊", score: 5 },
+                            { value: "rarement", text: "Rarement", icon: "🙂", score: 4 },
+                            { value: "parfois", text: "Parfois", icon: "😐", score: 3 },
+                            { value: "souvent", text: "Souvent", icon: "😴", score: 2 },
+                            { value: "toujours", text: "Toujours", icon: "😵", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "stress_mobilite",
+                        text: "Ressens-tu du stress ou de l'anxiété liés aux déplacements ?",
+                        type: "multiple",
+                        options: [
+                            { value: "conduite", text: "Stress de conduite", icon: "🚗", score: -1 },
+                            { value: "transports_publics", text: "Anxiété en transport public", icon: "🚌", score: -1 },
+                            { value: "retards", text: "Stress des retards", icon: "⏰", score: -1 },
+                            { value: "foule", text: "Peur de la foule", icon: "👥", score: -1 },
+                            { value: "nuit", text: "Peur des déplacements nocturnes", icon: "🌙", score: -1 },
+                            { value: "aucun", text: "Aucun stress particulier", icon: "😌", score: 3 }
+                        ]
+                    },
+                    {
+                        id: "handicap_mobilite",
+                        text: "As-tu un handicap ou une limitation qui affecte ta mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "aucun", text: "Aucun handicap", icon: "✅", score: 5 },
+                            { value: "leger", text: "Limitation légère", icon: "⚠️", score: 4 },
+                            { value: "modere", text: "Limitation modérée", icon: "🦽", score: 3 },
+                            { value: "important", text: "Handicap important", icon: "♿", score: 2 },
+                            { value: "severe", text: "Handicap sévère", icon: "🏥", score: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "financement",
+                title: "Financement & moyens économiques",
+                icon: "💰",
+                color: "yellow",
+                description: "Analyse de tes ressources financières pour la mobilité",
+                questions: [
+                    {
+                        id: "budget_transport_mensuel",
+                        text: "Quel est ton budget mensuel pour les transports ?",
+                        type: "single",
+                        options: [
+                            { value: "plus_200", text: "Plus de 200€", icon: "💸", score: 5 },
+                            { value: "100_200", text: "Entre 100 et 200€", icon: "💵", score: 4 },
+                            { value: "50_100", text: "Entre 50 et 100€", icon: "💴", score: 3 },
+                            { value: "20_50", text: "Entre 20 et 50€", icon: "💶", score: 2 },
+                            { value: "moins_20", text: "Moins de 20€", icon: "🪙", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "impact_budget",
+                        text: "Quel impact les frais de transport ont-ils sur ton budget ?",
+                        type: "single",
+                        options: [
+                            { value: "aucun", text: "Aucun impact", icon: "😊", score: 5 },
+                            { value: "leger", text: "Impact léger", icon: "🙂", score: 4 },
+                            { value: "modere", text: "Impact modéré", icon: "😐", score: 3 },
+                            { value: "important", text: "Impact important", icon: "😟", score: 2 },
+                            { value: "critique", text: "Impact critique", icon: "😰", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "aides_financieres",
+                        text: "Bénéficies-tu d'aides financières pour la mobilité ?",
+                        type: "multiple",
+                        options: [
+                            { value: "tarif_reduit", text: "Tarifs réduits transport", icon: "🎫", score: 2 },
+                            { value: "aide_permis", text: "Aide au permis", icon: "🚗", score: 3 },
+                            { value: "aide_vehicule", text: "Aide à l'achat véhicule", icon: "💰", score: 3 },
+                            { value: "carte_transport", text: "Carte transport gratuite", icon: "🆓", score: 2 },
+                            { value: "remboursement_employeur", text: "Remboursement employeur", icon: "🏢", score: 2 },
+                            { value: "aucune", text: "Aucune aide", icon: "❌", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "capacite_financement",
+                        text: "Pourrais-tu financer un projet mobilité (permis, véhicule) ?",
+                        type: "single",
+                        options: [
+                            { value: "facilement", text: "Facilement", icon: "💳", score: 5 },
+                            { value: "avec_effort", text: "Avec un effort d'épargne", icon: "🏦", score: 4 },
+                            { value: "avec_aide", text: "Avec aide familiale", icon: "👨‍👩‍👧‍👦", score: 3 },
+                            { value: "difficilement", text: "Très difficilement", icon: "😰", score: 2 },
+                            { value: "impossible", text: "Impossible actuellement", icon: "🚫", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "cout_entretien",
+                        text: "Comment gères-tu les coûts d'entretien de tes moyens de transport ?",
+                        type: "single",
+                        options: [
+                            { value: "sans_probleme", text: "Sans problème", icon: "🔧", score: 5 },
+                            { value: "planifie", text: "Je planifie les dépenses", icon: "📅", score: 4 },
+                            { value: "au_cas_par_cas", text: "Au cas par cas", icon: "🤷", score: 3 },
+                            { value: "difficilement", text: "Difficilement", icon: "😓", score: 2 },
+                            { value: "impossible", text: "Je ne peux pas", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "priorite_depenses",
+                        text: "Quelle priorité accordes-tu aux dépenses de mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "priorite_absolue", text: "Priorité absolue", icon: "🎯", score: 5 },
+                            { value: "tres_importante", text: "Très importante", icon: "⭐", score: 4 },
+                            { value: "importante", text: "Importante", icon: "👍", score: 3 },
+                            { value: "secondaire", text: "Secondaire", icon: "⏳", score: 2 },
+                            { value: "negligeable", text: "Négligeable", icon: "🤏", score: 1 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "social",
+                title: "Social & ressources relationnelles",
+                icon: "👥",
+                color: "pink",
+                description: "Évaluation de ton réseau social pour la mobilité",
+                questions: [
+                    {
+                        id: "soutien_famille",
+                        text: "Ta famille peut-elle t'aider pour tes déplacements ?",
+                        type: "single",
+                        options: [
+                            { value: "toujours", text: "Toujours disponible", icon: "👨‍👩‍👧‍👦", score: 5 },
+                            { value: "souvent", text: "Souvent disponible", icon: "✅", score: 4 },
+                            { value: "parfois", text: "Parfois disponible", icon: "⏰", score: 3 },
+                            { value: "rarement", text: "Rarement disponible", icon: "⚠️", score: 2 },
+                            { value: "jamais", text: "Jamais disponible", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "reseau_amis",
+                        text: "Tes amis peuvent-ils t'aider pour la mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "tres_souvent", text: "Très souvent", icon: "👫", score: 5 },
+                            { value: "souvent", text: "Souvent", icon: "🤝", score: 4 },
+                            { value: "parfois", text: "Parfois", icon: "👋", score: 3 },
+                            { value: "rarement", text: "Rarement", icon: "😕", score: 2 },
+                            { value: "jamais", text: "Jamais", icon: "😞", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "covoiturage_pratique",
+                        text: "Pratiques-tu le covoiturage ?",
+                        type: "single",
+                        options: [
+                            { value: "regulierement", text: "Régulièrement", icon: "🚗", score: 5 },
+                            { value: "occasionnellement", text: "Occasionnellement", icon: "🤝", score: 4 },
+                            { value: "rarement", text: "Rarement", icon: "⏰", score: 3 },
+                            { value: "jamais_interesse", text: "Jamais mais intéressé(e)", icon: "🤔", score: 2 },
+                            { value: "jamais_pas_interesse", text: "Jamais et pas intéressé(e)", icon: "🚫", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "isolement_mobilite",
+                        text: "Te sens-tu isolé(e) à cause de problèmes de mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "jamais", text: "Jamais", icon: "😊", score: 5 },
+                            { value: "rarement", text: "Rarement", icon: "🙂", score: 4 },
+                            { value: "parfois", text: "Parfois", icon: "😐", score: 3 },
+                            { value: "souvent", text: "Souvent", icon: "😔", score: 2 },
+                            { value: "toujours", text: "Toujours", icon: "😞", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "participation_sociale",
+                        text: "La mobilité limite-t-elle ta participation à des activités sociales ?",
+                        type: "single",
+                        options: [
+                            { value: "jamais", text: "Jamais", icon: "🎉", score: 5 },
+                            { value: "rarement", text: "Rarement", icon: "🎊", score: 4 },
+                            { value: "parfois", text: "Parfois", icon: "😐", score: 3 },
+                            { value: "souvent", text: "Souvent", icon: "😕", score: 2 },
+                            { value: "toujours", text: "Toujours", icon: "😞", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "entraide_communaute",
+                        text: "Existe-t-il des systèmes d'entraide transport dans ta communauté ?",
+                        type: "multiple",
+                        options: [
+                            { value: "transport_solidaire", text: "Transport solidaire", icon: "🤝", score: 2 },
+                            { value: "covoiturage_local", text: "Covoiturage local organisé", icon: "🚗", score: 2 },
+                            { value: "velo_partage", text: "Vélos en libre-service", icon: "🚲", score: 1 },
+                            { value: "accompagnement", text: "Service d'accompagnement", icon: "👥", score: 2 },
+                            { value: "aucun", text: "Aucun système", icon: "❌", score: 0 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "contraintes",
+                title: "Contraintes externes & barrières",
+                icon: "⚠️",
+                color: "orange",
+                description: "Identification des obstacles à ta mobilité",
+                questions: [
+                    {
+                        id: "contraintes_horaires",
+                        text: "Les horaires de transport correspondent-ils à tes besoins ?",
+                        type: "single",
+                        options: [
+                            { value: "parfaitement", text: "Parfaitement adaptés", icon: "⏰", score: 5 },
+                            { value: "bien", text: "Bien adaptés", icon: "✅", score: 4 },
+                            { value: "moyennement", text: "Moyennement adaptés", icon: "⚠️", score: 3 },
+                            { value: "mal", text: "Mal adaptés", icon: "😕", score: 2 },
+                            { value: "pas_du_tout", text: "Pas du tout adaptés", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "impact_meteo",
+                        text: "La météo affecte-t-elle tes déplacements ?",
+                        type: "single",
+                        options: [
+                            { value: "jamais", text: "Jamais", icon: "☀️", score: 5 },
+                            { value: "peu", text: "Très peu", icon: "🌤️", score: 4 },
+                            { value: "moderement", text: "Modérément", icon: "🌦️", score: 3 },
+                            { value: "beaucoup", text: "Beaucoup", icon: "🌧️", score: 2 },
+                            { value: "enormement", text: "Énormément", icon: "❄️", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "securite_trajets",
+                        text: "Te sens-tu en sécurité lors de tes trajets ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Pas du tout", "Peu", "Moyennement", "Assez", "Totalement"] }
+                    },
+                    {
+                        id: "barriere_administrative",
+                        text: "Rencontres-tu des barrières administratives pour la mobilité ?",
+                        type: "multiple",
+                        options: [
+                            { value: "procedures_complexes", text: "Procédures trop complexes", icon: "📋", score: -1 },
+                            { value: "documents_manquants", text: "Documents manquants", icon: "📄", score: -1 },
+                            { value: "delais_longs", text: "Délais trop longs", icon: "⏳", score: -1 },
+                            { value: "couts_cachés", text: "Coûts cachés", icon: "💸", score: -1 },
+                            { value: "aucune", text: "Aucune barrière", icon: "✅", score: 2 }
+                        ]
+                    },
+                    {
+                        id: "accessibilite_physique",
+                        text: "L'accessibilité physique des transports est-elle adaptée ?",
+                        type: "single",
+                        options: [
+                            { value: "parfaite", text: "Parfaitement adaptée", icon: "♿", score: 5 },
+                            { value: "bonne", text: "Bonne accessibilité", icon: "✅", score: 4 },
+                            { value: "correcte", text: "Accessibilité correcte", icon: "👍", score: 3 },
+                            { value: "limitee", text: "Accessibilité limitée", icon: "⚠️", score: 2 },
+                            { value: "mauvaise", text: "Mauvaise accessibilité", icon: "❌", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "contraintes_familiales",
+                        text: "As-tu des contraintes familiales qui limitent ta mobilité ?",
+                        type: "multiple",
+                        options: [
+                            { value: "garde_enfants", text: "Garde d'enfants", icon: "👶", score: -1 },
+                            { value: "aide_personne_agee", text: "Aide à personne âgée", icon: "👴", score: -1 },
+                            { value: "horaires_famille", text: "Horaires familiaux contraignants", icon: "⏰", score: -1 },
+                            { value: "interdiction_famille", text: "Interdiction familiale", icon: "🚫", score: -2 },
+                            { value: "aucune", text: "Aucune contrainte", icon: "✅", score: 2 }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: "projets",
+                title: "Projets personnels & aspirations mobilité",
+                icon: "🎯",
+                color: "indigo",
+                description: "Tes objectifs et projets de mobilité",
+                questions: [
+                    {
+                        id: "objectif_principal",
+                        text: "Quel est ton objectif principal en matière de mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "emploi", text: "Accéder à l'emploi", icon: "💼", score: 5 },
+                            { value: "formation", text: "Suivre une formation", icon: "📚", score: 4 },
+                            { value: "autonomie", text: "Gagner en autonomie", icon: "🦅", score: 4 },
+                            { value: "social", text: "Développer ma vie sociale", icon: "👥", score: 3 },
+                            { value: "loisirs", text: "Accéder aux loisirs", icon: "🎭", score: 3 }
+                        ]
+                    },
+                    {
+                        id: "projet_court_terme",
+                        text: "Quel est ton projet mobilité à court terme (6 mois) ?",
+                        type: "single",
+                        options: [
+                            { value: "permis", text: "Passer le permis", icon: "🚗", score: 4 },
+                            { value: "vehicule", text: "Acquérir un véhicule", icon: "🛒", score: 4 },
+                            { value: "ameliorer_transport", text: "Améliorer mes transports actuels", icon: "⬆️", score: 3 },
+                            { value: "competences", text: "Développer mes compétences mobilité", icon: "📈", score: 3 },
+                            { value: "aucun", text: "Aucun projet particulier", icon: "🤷", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "projet_long_terme",
+                        text: "Quel est ton projet mobilité à long terme (2-5 ans) ?",
+                        type: "single",
+                        options: [
+                            { value: "autonomie_complete", text: "Autonomie complète", icon: "🌟", score: 5 },
+                            { value: "mobilite_professionnelle", text: "Mobilité professionnelle", icon: "💼", score: 4 },
+                            { value: "mobilite_internationale", text: "Mobilité internationale", icon: "✈️", score: 4 },
+                            { value: "mobilite_durable", text: "Mobilité durable/écologique", icon: "🌱", score: 3 },
+                            { value: "pas_de_projet", text: "Pas de projet défini", icon: "❓", score: 1 }
+                        ]
+                    },
+                    {
+                        id: "motivation_changement",
+                        text: "Quelle est ta motivation pour améliorer ta mobilité ?",
+                        type: "scale",
+                        scale: { min: 1, max: 5, labels: ["Très faible", "Faible", "Moyenne", "Forte", "Très forte"] }
+                    },
+                    {
+                        id: "solutions_alternatives",
+                        text: "Es-tu ouvert(e) à des solutions de mobilité alternatives ?",
+                        type: "multiple",
+                        options: [
+                            { value: "velo_electrique", text: "Vélo électrique", icon: "🚴‍♂️", score: 2 },
+                            { value: "covoiturage", text: "Covoiturage régulier", icon: "🚗", score: 2 },
+                            { value: "transport_demande", text: "Transport à la demande", icon: "📞", score: 2 },
+                            { value: "mobilite_partagee", text: "Mobilité partagée", icon: "🤝", score: 2 },
+                            { value: "teletravail", text: "Télétravail/formation à distance", icon: "💻", score: 1 },
+                            { value: "aucune", text: "Aucune alternative", icon: "🚫", score: 0 }
+                        ]
+                    },
+                    {
+                        id: "priorite_mobilite",
+                        text: "Quelle est ta priorité en matière de mobilité ?",
+                        type: "single",
+                        options: [
+                            { value: "rapidite", text: "Rapidité des trajets", icon: "⚡", score: 3 },
+                            { value: "economie", text: "Économie/coût réduit", icon: "💰", score: 3 },
+                            { value: "confort", text: "Confort de transport", icon: "🛋️", score: 2 },
+                            { value: "ecologie", text: "Respect de l'environnement", icon: "🌱", score: 2 },
+                            { value: "flexibilite", text: "Flexibilité horaire", icon: "⏰", score: 3 }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Variables globales
+        let currentDomainIndex = 0;
+        let currentQuestionInDomain = 0;
+        let totalQuestions = 0;
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let domainScores = {};
+        let currentProfile = "";
+
+        // Calcul du nombre total de questions
+        diagnosticDomains.forEach(domain => {
+            totalQuestions += domain.questions.length;
+        });
+
+        function startDiagnostic() {
+            document.getElementById('welcome-page').classList.add('hidden');
+            document.getElementById('question-pages').classList.remove('hidden');
+            initializeStepIndicators();
+            showCurrentQuestion();
+        }
+
+        function initializeStepIndicators() {
+            // Fonction vide - indicateurs supprimés
+        }
+
+        function updateStepIndicators() {
+            // Fonction vide - indicateurs supprimés
+        }
+
+        function showCurrentQuestion() {
+            const domain = diagnosticDomains[currentDomainIndex];
+            const question = domain.questions[currentQuestionInDomain];
+            const container = document.getElementById('question-container');
+            
+            // Vérifier les conditions
+            if (question.conditional && !checkConditional(question.conditional)) {
+                nextQuestion();
+                return;
+            }
+            
+            updateProgress();
+            updateStepIndicators();
+            
+            let html = `
+                <div class="mb-10">
+                    <div class="flex items-center mb-8">
+                        <div class="w-20 h-20 bg-${domain.color}-100 rounded-full flex items-center justify-center mr-6 shadow-lg">
+                            <span class="text-4xl">${domain.icon}</span>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-montserrat font-bold text-purple-800">${domain.title}</h3>
+                            <p class="text-lg text-gray-600 mt-2">${domain.description}</p>
+                            <p class="text-sm text-${domain.color}-600 font-semibold mt-1">Question ${currentQuestionInDomain + 1} sur ${domain.questions.length}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-10">
+                    <h4 class="text-2xl font-nunito font-bold text-pink-600 mb-8">${question.text}</h4>
+            `;
+
+            if (question.type === 'scale') {
+                html += generateScaleQuestion(question);
+            } else {
+                html += generateOptionsQuestion(question);
+            }
+
+            html += `</div>`;
+            container.innerHTML = html;
+            
+            updateNavigation();
+        }
+
+        function generateScaleQuestion(question) {
+            const scale = question.scale;
+            let html = '<div class="flex justify-center items-center space-x-4 mb-6">';
+            
+            for (let i = scale.min; i <= scale.max; i++) {
+                const isSelected = answers[question.id] === i;
+                html += `
+                    <div class="text-center">
+                        <button onclick="selectScaleOption('${question.id}', ${i}, this)" 
+                                class="scale-option w-16 h-16 rounded-full border-4 font-bold text-lg transition-all ${
+                                    isSelected ? 'bg-purple-600 text-white border-purple-600 transform scale-110' : 'bg-white border-gray-300 hover:border-purple-400'
+                                }">
+                            ${i}
+                        </button>
+                        <p class="text-xs text-gray-600 mt-2 max-w-16">${scale.labels[i-1]}</p>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            return html;
+        }
+
+        function generateOptionsQuestion(question) {
+            let html = '<div class="grid gap-4">';
+            
+            question.options.forEach((option, index) => {
+                const isSelected = question.type === 'multiple' 
+                    ? (answers[question.id] && answers[question.id].includes(option.value))
+                    : (answers[question.id] === option.value);
+                
+                html += `
+                    <div class="option-card bg-gray-50 border-3 border-gray-200 rounded-2xl p-6 card-hover ${isSelected ? 'option-selected border-purple-600' : ''}" 
+                         onclick="selectOption('${question.id}', '${option.value}', '${question.type}', this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="text-3xl mr-6">${option.icon}</span>
+                                <span class="font-nunito font-semibold text-lg">${option.text}</span>
+                            </div>
+                            ${question.type === 'multiple' ? '<span class="text-3xl">☐</span>' : ''}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            return html;
+        }
+
+        function checkConditional(conditional) {
+            const answer = answers[conditional.question];
+            return conditional.values.includes(answer);
+        }
+
+        function selectOption(questionId, value, type, element) {
+            if (type === 'multiple') {
+                if (!answers[questionId]) answers[questionId] = [];
+                
+                const index = answers[questionId].indexOf(value);
+                if (index > -1) {
+                    answers[questionId].splice(index, 1);
+                    element.classList.remove('option-selected', 'border-purple-600');
+                    element.querySelector('span:last-child').textContent = '☐';
+                } else {
+                    answers[questionId].push(value);
+                    element.classList.add('option-selected', 'border-purple-600');
+                    element.querySelector('span:last-child').textContent = '☑';
+                }
+            } else {
+                answers[questionId] = value;
+                
+                document.querySelectorAll('.option-card').forEach(card => {
+                    card.classList.remove('option-selected', 'border-purple-600');
+                });
+                
+                element.classList.add('option-selected', 'border-purple-600');
+            }
+        }
+
+        function selectScaleOption(questionId, value, element) {
+            answers[questionId] = value;
+            
+            document.querySelectorAll('.scale-option').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-600', 'transform', 'scale-110');
+                btn.classList.add('bg-white', 'border-gray-300');
+            });
+            
+            element.classList.remove('bg-white', 'border-gray-300');
+            element.classList.add('bg-purple-600', 'text-white', 'border-purple-600', 'transform', 'scale-110');
+        }
+
+        function nextQuestion() {
+            const domain = diagnosticDomains[currentDomainIndex];
+            
+            if (currentQuestionInDomain < domain.questions.length - 1) {
+                currentQuestionInDomain++;
+            } else if (currentDomainIndex < diagnosticDomains.length - 1) {
+                currentDomainIndex++;
+                currentQuestionInDomain = 0;
+            } else {
+                // Fin du questionnaire
+                calculateScores();
+                generateProfile();
+                showProfile();
+                return;
+            }
+            
+            currentQuestionIndex++;
+            showCurrentQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionInDomain > 0) {
+                currentQuestionInDomain--;
+            } else if (currentDomainIndex > 0) {
+                currentDomainIndex--;
+                currentQuestionInDomain = diagnosticDomains[currentDomainIndex].questions.length - 1;
+            }
+            
+            currentQuestionIndex--;
+            showCurrentQuestion();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `Question ${currentQuestionIndex + 1}/${totalQuestions}`;
+            document.getElementById('step-indicator').textContent = `Étape ${currentDomainIndex + 1}/8`;
+            document.getElementById('question-counter').textContent = `${currentQuestionIndex + 1} sur ${totalQuestions}`;
+            document.getElementById('remaining-questions').textContent = totalQuestions - currentQuestionIndex - 1;
+            document.getElementById('domain-title').textContent = diagnosticDomains[currentDomainIndex].title;
+        }
+
+        function updateNavigation() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = currentDomainIndex === 0 && currentQuestionInDomain === 0;
+            
+            if (currentDomainIndex === diagnosticDomains.length - 1 && currentQuestionInDomain === diagnosticDomains[currentDomainIndex].questions.length - 1) {
+                nextBtn.textContent = 'Voir mon profil 360° 🎯';
+            } else {
+                nextBtn.textContent = 'Suivant ➡️';
+            }
+        }
+
+        function calculateScores() {
+            // Initialisation des scores par domaine
+            diagnosticDomains.forEach(domain => {
+                domainScores[domain.id] = 0;
+            });
+
+            // Calcul des scores
+            diagnosticDomains.forEach(domain => {
+                let domainScore = 0;
+                let questionCount = 0;
+
+                domain.questions.forEach(question => {
+                    const answer = answers[question.id];
+                    if (answer !== undefined) {
+                        questionCount++;
+                        
+                        if (question.type === 'scale') {
+                            domainScore += (answer / 5) * 100; // Normalisation sur 100
+                        } else if (question.type === 'multiple') {
+                            if (Array.isArray(answer)) {
+                                answer.forEach(val => {
+                                    const option = question.options.find(opt => opt.value === val);
+                                    if (option && option.score) {
+                                        domainScore += option.score * 10; // Multiplication pour normaliser
+                                    }
+                                });
+                            }
+                        } else {
+                            const option = question.options.find(opt => opt.value === answer);
+                            if (option && option.score !== undefined) {
+                                domainScore += (option.score / 5) * 100; // Normalisation sur 100
+                            }
+                        }
+                    }
+                });
+
+                if (questionCount > 0) {
+                    domainScores[domain.id] = Math.max(0, Math.min(100, domainScore / questionCount));
+                }
+            });
+        }
+
+        function generateProfile() {
+            // Calcul du score global
+            const totalScore = Object.values(domainScores).reduce((sum, score) => sum + score, 0) / Object.keys(domainScores).length;
+            
+            // Détermination du profil basé sur les scores
+            if (totalScore >= 80) {
+                currentProfile = "🌟 Mobilité Autonome Avancée";
+            } else if (totalScore >= 65) {
+                currentProfile = "🚀 Mobilité en Développement";
+            } else if (totalScore >= 50) {
+                currentProfile = "🔄 Mobilité en Transition";
+            } else if (totalScore >= 35) {
+                currentProfile = "🌱 Mobilité Émergente";
+            } else {
+                currentProfile = "🎯 Mobilité à Construire";
+            }
+        }
+
+        function showProfile() {
+            document.getElementById('question-pages').classList.add('hidden');
+            document.getElementById('profile-page').classList.remove('hidden');
+            
+            document.getElementById('profile-badge').textContent = currentProfile;
+            
+            generateRadarChart();
+            generateDomainScores();
+            generateAdvancedRecommendations();
+        }
+
+        function generateRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            const labels = diagnosticDomains.map(domain => domain.title.split(' ')[0]);
+            const data = diagnosticDomains.map(domain => domainScores[domain.id] || 0);
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ton profil mobilité',
+                        data: data,
+                        backgroundColor: 'rgba(122, 26, 122, 0.2)',
+                        borderColor: '#7A1A7A',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#E61D72',
+                        pointBorderColor: '#7A1A7A',
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: { size: 12 }
+                            },
+                            grid: { color: '#e5e7eb' },
+                            angleLines: { color: '#d1d5db' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+
+        function generateDomainScores() {
+            const container = document.getElementById('domain-scores');
+            let html = '';
+            
+            diagnosticDomains.forEach(domain => {
+                const score = Math.round(domainScores[domain.id] || 0);
+                let colorClass = 'red';
+                if (score >= 70) colorClass = 'green';
+                else if (score >= 50) colorClass = 'yellow';
+                else if (score >= 30) colorClass = 'orange';
+                
+                html += `
+                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                        <div class="flex items-center">
+                            <span class="text-2xl mr-4">${domain.icon}</span>
+                            <div>
+                                <h4 class="font-semibold text-gray-800">${domain.title}</h4>
+                                <p class="text-sm text-gray-600">${domain.description}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-2xl font-bold text-${colorClass}-600">${score}%</div>
+                            <div class="w-24 h-3 bg-gray-200 rounded-full">
+                                <div class="h-3 bg-${colorClass}-500 rounded-full transition-all duration-1000" style="width: ${score}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function generateAdvancedRecommendations() {
+            const container = document.getElementById('recommendations-grid');
+            let recommendations = [];
+
+            // Recommandations basées sur les scores faibles
+            diagnosticDomains.forEach(domain => {
+                const score = domainScores[domain.id] || 0;
+                if (score < 50) {
+                    recommendations.push({
+                        title: `Améliorer ${domain.title.split(' ')[0]}`,
+                        description: getRecommendationForDomain(domain.id),
+                        icon: domain.icon,
+                        priority: score < 30 ? "Priorité haute" : "Recommandé",
+                        color: domain.color
+                    });
+                }
+            });
+
+            // Recommandations générales
+            recommendations.push(
+                { title: "Bilan avec conseiller", description: "Rendez-vous personnalisé", icon: "👨‍💼", priority: "Essentiel", color: "purple" },
+                { title: "Atelier mobilité", description: "Formation pratique", icon: "🎓", priority: "Recommandé", color: "blue" },
+                { title: "Suivi 3 mois", description: "Évaluation des progrès", icon: "📅", priority: "Planifié", color: "green" }
+            );
+
+            let html = '';
+            recommendations.slice(0, 6).forEach(rec => {
+                html += `
+                    <div class="bg-white border-2 border-${rec.color}-200 rounded-2xl p-6 card-hover">
+                        <div class="text-center mb-4">
+                            <div class="text-4xl mb-2">${rec.icon}</div>
+                            <h4 class="font-bold text-lg text-gray-800">${rec.title}</h4>
+                            <p class="text-sm text-gray-600 mb-3">${rec.description}</p>
+                            <span class="inline-block px-3 py-1 bg-${rec.color}-100 text-${rec.color}-700 rounded-full text-xs font-semibold">
+                                ${rec.priority}
+                            </span>
+                        </div>
+                        <button class="w-full bg-${rec.color}-500 text-white py-2 rounded-lg font-semibold hover:bg-${rec.color}-600 transition-all">
+                            En savoir plus
+                        </button>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function getRecommendationForDomain(domainId) {
+            const recommendations = {
+                geographie: "Optimiser ton environnement de déplacement",
+                transport: "Développer tes moyens de transport",
+                competences: "Renforcer tes compétences mobilité",
+                sante: "Adapter la mobilité à ta santé",
+                financement: "Optimiser ton budget transport",
+                social: "Développer ton réseau mobilité",
+                contraintes: "Surmonter les obstacles",
+                projets: "Concrétiser tes projets mobilité"
+            };
+            return recommendations[domainId] || "Améliorer ce domaine";
+        }
+
+        function showReport() {
+            document.getElementById('profile-page').classList.add('hidden');
+            document.getElementById('report-page').classList.remove('hidden');
+            generateAdvancedReport();
+        }
+
+        function generateAdvancedReport() {
+            const container = document.getElementById('report-content');
+            const date = new Date().toLocaleDateString('fr-FR');
+            
+            let html = `
+                <div class="text-center mb-10">
+                    <div class="gradient-bg text-white rounded-3xl p-8 mb-8">
+                        <h3 class="text-4xl font-montserrat font-bold mb-4">${currentProfile}</h3>
+                        <p class="text-xl opacity-90">Diagnostic complet généré le ${date}</p>
+                        <div class="mt-4 text-sm opacity-75">
+                            ID Diagnostic: DM360-${Date.now().toString(36).toUpperCase()}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-8 mb-10">
+                    <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8">
+                        <h4 class="text-2xl font-montserrat font-bold text-purple-800 mb-6">📊 Synthèse des scores</h4>
+                        ${generateScoresSummary()}
+                    </div>
+
+                    <div class="bg-gradient-to-br from-green-50 to-blue-50 rounded-3xl p-8">
+                        <h4 class="text-2xl font-montserrat font-bold text-purple-800 mb-6">🎯 Points clés</h4>
+                        ${generateKeyPoints()}
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-orange-50 to-red-50 rounded-3xl p-8 mb-8">
+                    <h4 class="text-2xl font-montserrat font-bold text-purple-800 mb-6">🚀 Plan d'action personnalisé</h4>
+                    ${generateActionPlan()}
+                </div>
+
+                <div class="bg-yellow-50 border-l-8 border-yellow-400 p-8 rounded-r-3xl">
+                    <h4 class="text-2xl font-montserrat font-bold text-yellow-800 mb-4">📋 Prochaines étapes</h4>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-bold text-yellow-700 mb-2">Immédiat (1 semaine)</h5>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-yellow-700">
+                                <li>Partager ce bilan avec ton conseiller</li>
+                                <li>Identifier les aides disponibles</li>
+                                <li>Planifier un rendez-vous de suivi</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="font-bold text-yellow-700 mb-2">Court terme (1 mois)</h5>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-yellow-700">
+                                <li>S'inscrire aux ateliers recommandés</li>
+                                <li>Démarrer les démarches prioritaires</li>
+                                <li>Évaluer les progrès réalisés</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function generateScoresSummary() {
+            let html = '<div class="space-y-3">';
+            
+            diagnosticDomains.forEach(domain => {
+                const score = Math.round(domainScores[domain.id] || 0);
+                let status = 'À développer';
+                let colorClass = 'red';
+                
+                if (score >= 70) { status = 'Excellent'; colorClass = 'green'; }
+                else if (score >= 50) { status = 'Correct'; colorClass = 'yellow'; }
+                else if (score >= 30) { status = 'Moyen'; colorClass = 'orange'; }
+                
+                html += `
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="text-lg mr-2">${domain.icon}</span>
+                            <span class="font-medium">${domain.title.split(' ')[0]}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-${colorClass}-600">${score}%</span>
+                            <div class="text-xs text-${colorClass}-600">${status}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        function generateKeyPoints() {
+            const scores = Object.values(domainScores);
+            const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
+            const strongPoints = diagnosticDomains.filter(domain => domainScores[domain.id] >= 70);
+            const weakPoints = diagnosticDomains.filter(domain => domainScores[domain.id] < 40);
+            
+            return `
+                <div class="space-y-4">
+                    <div>
+                        <h5 class="font-bold text-green-700 mb-2">✅ Points forts</h5>
+                        <div class="text-sm text-green-600">
+                            ${strongPoints.length > 0 ? strongPoints.map(d => d.title.split(' ')[0]).join(', ') : 'Potentiel à développer dans tous les domaines'}
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-orange-700 mb-2">⚠️ Points d'amélioration</h5>
+                        <div class="text-sm text-orange-600">
+                            ${weakPoints.length > 0 ? weakPoints.map(d => d.title.split(' ')[0]).join(', ') : 'Bon niveau général'}
+                        </div>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-blue-700 mb-2">📈 Score global</h5>
+                        <div class="text-2xl font-bold text-blue-600">${Math.round(avgScore)}%</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateActionPlan() {
+            const weakDomains = diagnosticDomains.filter(domain => domainScores[domain.id] < 50);
+            
+            let html = '<div class="grid md:grid-cols-2 gap-6">';
+            
+            // Actions prioritaires
+            html += `
+                <div>
+                    <h5 class="font-bold text-red-700 mb-3">🔥 Actions prioritaires</h5>
+                    <div class="space-y-2">
+            `;
+            
+            weakDomains.slice(0, 3).forEach(domain => {
+                html += `
+                    <div class="bg-white rounded-lg p-3 border-l-4 border-red-400">
+                        <div class="font-medium">${domain.icon} ${domain.title.split(' ')[0]}</div>
+                        <div class="text-sm text-gray-600">${getActionForDomain(domain.id)}</div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                <div>
+                    <h5 class="font-bold text-blue-700 mb-3">📅 Actions à moyen terme</h5>
+                    <div class="space-y-2">
+                        <div class="bg-white rounded-lg p-3 border-l-4 border-blue-400">
+                            <div class="font-medium">🎓 Formation continue</div>
+                            <div class="text-sm text-gray-600">Développer tes compétences mobilité</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border-l-4 border-blue-400">
+                            <div class="font-medium">🔄 Suivi régulier</div>
+                            <div class="text-sm text-gray-600">Évaluation trimestrielle des progrès</div>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border-l-4 border-blue-400">
+                            <div class="font-medium">🌟 Objectifs long terme</div>
+                            <div class="text-sm text-gray-600">Autonomie complète en mobilité</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            html += '</div>';
+            return html;
+        }
+
+        function getActionForDomain(domainId) {
+            const actions = {
+                geographie: "Analyser les solutions de transport locales",
+                transport: "Évaluer les options de véhicules adaptés",
+                competences: "Suivre une formation aux outils mobilité",
+                sante: "Adapter les moyens de transport à tes besoins",
+                financement: "Rechercher les aides financières disponibles",
+                social: "Développer un réseau d'entraide transport",
+                contraintes: "Identifier et lever les obstacles principaux",
+                projets: "Définir un plan d'action mobilité personnalisé"
+            };
+            return actions[domainId] || "Améliorer ce domaine";
+        }
+
+        function downloadAdvancedPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Configuration avancée
+            doc.setFont("helvetica");
+            
+            // Page 1 - En-tête et profil
+            doc.setFillColor(122, 26, 122);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(32);
+            doc.text('Diag\'Mob 360°', 20, 25);
+            doc.setFontSize(16);
+            doc.text('Diagnostic mobilité complet', 20, 35);
+            
+            // Profil et date
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(24);
+            doc.setTextColor(122, 26, 122);
+            doc.text(currentProfile, 20, 60);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Diagnostic généré le ${new Date().toLocaleDateString('fr-FR')}`, 20, 70);
+            doc.text(`ID: DM360-${Date.now().toString(36).toUpperCase()}`, 20, 78);
+            
+            // Scores par domaine
+            let yPos = 95;
+            doc.setFontSize(18);
+            doc.setTextColor(122, 26, 122);
+            doc.text('Scores par domaine', 20, yPos);
+            yPos += 15;
+            
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            
+            diagnosticDomains.forEach(domain => {
+                const score = Math.round(domainScores[domain.id] || 0);
+                doc.text(`${domain.title}: ${score}%`, 25, yPos);
+                yPos += 8;
+            });
+            
+            // Nouvelle page pour les recommandations
+            doc.addPage();
+            
+            // En-tête page 2
+            doc.setFillColor(122, 26, 122);
+            doc.rect(0, 0, 210, 20, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(16);
+            doc.text('Plan d\'action personnalisé', 20, 14);
+            
+            yPos = 35;
+            doc.setFontSize(16);
+            doc.setTextColor(122, 26, 122);
+            doc.text('Recommandations prioritaires', 20, yPos);
+            yPos += 15;
+            
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            
+            const weakDomains = diagnosticDomains.filter(domain => domainScores[domain.id] < 50);
+            weakDomains.forEach(domain => {
+                doc.text(`• ${domain.title}: ${getActionForDomain(domain.id)}`, 25, yPos);
+                yPos += 8;
+            });
+            
+            yPos += 10;
+            doc.setFontSize(16);
+            doc.setTextColor(122, 26, 122);
+            doc.text('Prochaines étapes', 20, yPos);
+            yPos += 15;
+            
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            const steps = [
+                'Partager ce bilan avec votre conseiller Mission Locale',
+                'Identifier les aides financières disponibles',
+                'S\'inscrire aux ateliers recommandés',
+                'Planifier un suivi dans 3 mois',
+                'Évaluer les progrès réalisés'
+            ];
+            
+            steps.forEach(step => {
+                doc.text(`• ${step}`, 25, yPos);
+                yPos += 8;
+            });
+            
+            // Pied de page
+            doc.setFontSize(9);
+            doc.setTextColor(128, 128, 128);
+            doc.text('Document généré par Diag\'Mob 360° - Mission Locale', 20, 280);
+            doc.text('Diagnostic technique complet pour accompagnement professionnel', 20, 287);
+            
+            // Téléchargement
+            const filename = `diagmob-360-${currentProfile.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(filename);
+        }
+
+        function shareAdvancedReport() {
+            const avgScore = Math.round(Object.values(domainScores).reduce((sum, score) => sum + score, 0) / Object.keys(domainScores).length);
+            
+            const subject = encodeURIComponent(`Bilan Diag'Mob 360° - ${currentProfile}`);
+            const body = encodeURIComponent(`Bonjour,
+
+Je vous transmets mon diagnostic mobilité 360° complet généré par Diag'Mob.
+
+PROFIL IDENTIFIÉ: ${currentProfile}
+SCORE GLOBAL: ${avgScore}%
+DATE DU DIAGNOSTIC: ${new Date().toLocaleDateString('fr-FR')}
+ID DIAGNOSTIC: DM360-${Date.now().toString(36).toUpperCase()}
+
+SCORES PAR DOMAINE:
+${diagnosticDomains.map(domain => `• ${domain.title}: ${Math.round(domainScores[domain.id] || 0)}%`).join('\n')}
+
+DOMAINES PRIORITAIRES À TRAVAILLER:
+${diagnosticDomains.filter(domain => domainScores[domain.id] < 50).map(domain => `• ${domain.title}`).join('\n')}
+
+Ce diagnostic technique complet peut servir de base pour notre prochain entretien et l'élaboration d'un plan d'accompagnement personnalisé.
+
+Je reste disponible pour échanger sur ces résultats.
+
+Cordialement`);
+            
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function exportData() {
+            const exportData = {
+                profile: currentProfile,
+                date: new Date().toISOString(),
+                id: `DM360-${Date.now().toString(36).toUpperCase()}`,
+                scores: domainScores,
+                answers: answers,
+                domains: diagnosticDomains.map(d => ({ id: d.id, title: d.title }))
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `diagmob-360-data-${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            
+            URL.revokeObjectURL(url);
+        }
+
+        function restartDiagnostic() {
+            // Réinitialisation complète
+            currentDomainIndex = 0;
+            currentQuestionInDomain = 0;
+            currentQuestionIndex = 0;
+            answers = {};
+            domainScores = {};
+            currentProfile = "";
+            
+            // Retour à la page d'accueil
+            document.getElementById('report-page').classList.add('hidden');
+            document.getElementById('welcome-page').classList.remove('hidden');
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97ffb2c7351cd682',t:'MTc1ODAxODczMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
